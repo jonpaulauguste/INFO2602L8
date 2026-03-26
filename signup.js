@@ -24,5 +24,17 @@ async function signup(event){
   }
 }
 
-const signupForm = document.forms['signUpForm'] || document.querySelector('#signUpForm');
-signupForm.addEventListener('submit', signup);
+function bindSignupForm() {
+  const signupForm = document.forms['signUpForm'] || document.querySelector('#signUpForm');
+  if (!signupForm) {
+    console.error('Signup form not found');
+    return;
+  }
+  signupForm.addEventListener('submit', signup);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bindSignupForm);
+} else {
+  bindSignupForm();
+}
