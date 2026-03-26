@@ -2,7 +2,11 @@
 const server = "http://localhost:8000";
 
 function toast(message){
-  M.toast({html: message});
+  if (window.M && typeof window.M.toast === 'function') {
+    window.M.toast({html: message});
+  } else {
+    alert(message);
+  }
 }
 
 async function sendRequest(url, method, data){
