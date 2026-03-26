@@ -9,7 +9,7 @@ async function displayTodos(data) {
 
   let html = '';//make an empty html string 
 
-  if ("error" in data) {//user not logged in 
+  if ("error" in data || "detail" in data) {//user not logged in 
     html += `
       <li class="card collection-item col s12 m4">
                 <div class="card-content">
@@ -44,7 +44,11 @@ async function displayTodos(data) {
 }
 
 async function loadView() {
-  let todos = await sendRequest(`${server}/todos`, 'GET');
+  // Lab text uses /todo; FastAPI Lab 4 uses /todos.
+  let todos = await sendRequest(`${server}/todo`, 'GET');
+  if ("detail" in todos) {
+    todos = await sendRequest(`${server}/todos`, 'GET');
+  }
   displayTodos(todos);
 }
 
@@ -61,9 +65,12 @@ async function createTodo(event) {
 
   event.target.reset();//reset form
 
-  let result = await sendRequest(`${server}/todos`, 'POST', data);
+  let result = await sendRequest(`${server}/todo`, 'POST', data);
+  if ('detail' in result) {
+    result = await sendRequest(`${server}/todos`, 'POST', data);
+  }
 
-  if ('error' in result) {
+  if ('error' in result || 'detail' in result) {
     toast('Error: Not Logged In');
   } else {
     toast('Todo Created!');
@@ -79,14 +86,16 @@ document.forms['addForm'].addEventListener('submit', createTodo);
 async function toggleDone(event) {
   let checkbox = event.target;
   let id = checkbox.dataset['id'];//get id from data attribute
+  let done = checkbox.checked;
 
-  let result = await sendRequest(`${server}/todos/${id}/done`, 'PUT');
+  let result = await sendRequest(`${server}/todo/${id}`, 'PUT', { done: done });
 
-  toast(result.message);
+  let message = done ? 'Done!' : 'Not Done!';
+  toast(message);
 }
 
 async function deleteTodo(id) {
-  let result = await sendRequest(`${server}/todos/${id}`, 'DELETE');
+  let result = await sendRequest(`${server}/todo/${id}`, 'DELETE');
 
   toast('Deleted!');
 
