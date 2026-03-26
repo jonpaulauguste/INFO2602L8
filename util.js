@@ -1,5 +1,5 @@
 // Lab 4 FastAPI backend
-const server = "http://localhost:8000";
+const server = "http://127.0.0.1:8000";
 
 function toast(message){
   if (window.M && typeof window.M.toast === 'function') {
