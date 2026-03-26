@@ -24,4 +24,5 @@ async function signup(event){
   }
 }
 
-document.forms['signUpForm'].addEventListener('submit', signup);
+const signupForm = document.forms['signUpForm'] || document.querySelector('#signUpForm');
+signupForm.addEventListener('submit', signup);
